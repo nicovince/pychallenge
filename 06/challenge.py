@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """http://www.pythonchallenge.com/pc/def/channel.html"""
-from PIL import Image
 import requests
 import re
+import os
 from zipfile import ZipFile
 
 def get_image():
@@ -28,11 +28,17 @@ def get_next(filename):
 
 
 def main():
-    #get_zip()
-    first = 90052
-    zip_fd = ZipFile("channel.zip", 'r')
+    git_dir = os.popen('git rev-parse --show-toplevel').read().rstrip("\n")
+    challenge = "06"
+    challenge_dir = f"{git_dir}/{challenge}"
+    get_zip()
+    with ZipFile("channel.zip", 'r') as zip_fd:
+        zip_fd.extractall(challenge_dir)
+
+    print(challenge_dir)
 
     comments = ""
+    first = 90052
     res = get_next(f"{first}.txt")
     while res is not None:
         (nxt, line) = res
