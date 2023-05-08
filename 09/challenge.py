@@ -1,13 +1,32 @@
 #!/usr/bin/env python3
 """http://www.pythonchallenge.com/pc/return/good.html"""
-import bz2
+import requests
+from requests.auth import HTTPBasicAuth
 import os
-import urllib2
+from PIL import Image
+
+def get_img(dest_dir):
+    r = requests.get("http://www.pythonchallenge.com/pc/return/good.jpg", auth=HTTPBasicAuth('huge', 'file'))
+    img = f"{dest_dir}/good.jpg"
+    with open(img, 'wb') as fd:
+        fd.write(r.content)
+    return img
+
+def get_coords(l):
+    return [x for x in zip(l[::2], l[1::2])]
+
+def color_pixels(im, pixels, color):
+    offset = 3
+    for (x, y) in pixels:
+        im.putpixel((x, y), color)
+        for x_ in range(x - offset, x + offset):
+            for y_ in range(y - offset, y + offset):
+                im.putpixel((x_, y_), color)
 
 def main():
     root_url = "http://www.pythonchallenge.com/pc/def"
     git_dir = os.popen('git rev-parse --show-toplevel').read().rstrip("\n")
-    challenge = "08"
+    challenge = "09"
     challenge_dir = f"{git_dir}/{challenge}"
     first = [146, 399, 163, 403, 170, 393, 169, 391, 166, 386, 170, 381, 170, 371, 170,
              355, 169, 346, 167, 335, 170, 329, 170, 320, 170, 310, 171, 301, 173, 290,
@@ -48,6 +67,17 @@ def main():
               148, 87, 140, 96, 138, 105, 141, 110, 136, 111, 126, 113, 129,
               118, 117, 128, 114, 137, 115, 146, 114, 155, 115, 158, 121, 157,
               128, 156, 134, 157, 136, 156, 136]
+    first_coords = get_coords(first)
+    second_coords = get_coords(second)
+    img = get_img(challenge_dir)
+    (filename, ext) = os.path.splitext(img)
+    with Image.open(img) as im:
+        print(f"format: {im.format}")
+        print(f"mode: {im.mode}")
+        color_pixels(im, first_coords, (255, 0, 0))
+        color_pixels(im, second_coords, (0, 255, 0))
+        im.save(f"{filename}_1.jpg", "JPEG")
+    print(f"{root_url}/bull.html")
 
 
 
