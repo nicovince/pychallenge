@@ -25,6 +25,7 @@ def color_pixels(im, pixels, color):
 
 def main():
     root_url = "http://www.pythonchallenge.com/pc/def"
+    answers_url = "http://www.pythonchallenge.com/pcc/return/"
     git_dir = os.popen('git rev-parse --show-toplevel').read().rstrip("\n")
     challenge = "09"
     challenge_dir = f"{git_dir}/{challenge}"
@@ -78,6 +79,7 @@ def main():
         color_pixels(im, second_coords, (0, 255, 0))
         im.save(f"{filename}_1.jpg", "JPEG")
     print(f"{root_url}/bull.html")
+    print(f"{answers_url}/bull.html")
 
 
 
